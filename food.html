@@ -34,7 +34,16 @@
       <div class="jumbotron">
         <div ng-if="!f.alreadyIn">
           <p class="lead">Just enter your name and press the sign up button to sign up for lunch for today.</p>
-          <p><input type="text" ng-model="f.name" /> <button ng-disabled="f.name.length < 2 || f.pendingRequest" class="btn btn-lg btn-success" href="#" role="button" ng-click="f.signup()">Sign me up!</button></p>
+          <div class="row">
+            <div class="col-lg-6 col-lg-offset-3">
+              <div class="input-group input-group-lg">
+                <input type="text" class="form-control" ng-model="f.name" />
+                <span class="input-group-btn">
+                  <button ng-disabled="f.name.length < 2 || f.pendingRequest" class="btn btn-lg btn-success" href="#" role="button" ng-click="f.signup()">Sign me up!</button>  
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
         <div ng-if="f.alreadyIn">
           <p class="lead">You're already in!</p>
