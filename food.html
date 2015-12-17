@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="en" ng-app="foodApp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Food order</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  </head>
+
+  <body ng-controller="FoodCtrl as f">
+
+    <div class="container">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation"><a href="http://fewald.net">fewald.net</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Lunch coordinator</h3>
+      </div>
+
+      <div class="jumbotron">
+        <div ng-if="!f.alreadyIn">
+          <p class="lead">Just enter your name and press the sign up button to sign up for lunch for today.</p>
+          <p><input type="text" ng-model="f.name" /> <button ng-disabled="f.name.length < 2 || f.pendingRequest" class="btn btn-lg btn-success" href="#" role="button" ng-click="f.signup()">Sign me up!</button></p>
+        </div>
+        <div ng-if="f.alreadyIn">
+          <p class="lead">You're already in!</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-10 col-lg-offset-1">
+          <h3>
+            These people are in today: 
+            <span ng-repeat="n in f.namesList track by $index">
+              <span ng-if="!$last">{{n}},</span>
+              <span ng-if="$last">{{n}}</span>
+            </span>
+          </h3>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p>&copy; 2015 f-ewald</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script type="text/javascript" src="notie.js"></script>
+    <script type="text/javascript">
+    angular.module('foodApp', [])
+      .controller('FoodCtrl', ['$http', function($http) {
+        var food = this;
+        food.alreadyIn = false;
+        food.pendingRequest = false;
+        food.name = '';
+        food.namesList = [];
+
+        food.signup = function() {
+          food.pendingRequest = true;
+          $http.post('/lunch/signup', {name: food.name})
+            .then(function (response) {
+              console.log(response);
+              notie.alert(1, 'Success, you\'re in for today, ' + food.name + '!', 1.5);
+              food.alreadyIn = true;
+              food.pendingRequest = false;
+            }, function (response) {
+              notie.alert(3, 'Error ' + response.status, 5);
+              food.pendingRequest = false;
+            });
+        };
+        refetch_updates($http, food, 0);
+      }]);
+
+      function fetch_updates($http, food, errorCounter) {
+        console.log('fetching names...');
+        $http.get('/lunch/people.json')
+          .then(function(response) {
+            if(food.namesList.length < response.data.length) {
+              notie.alert(4, 'Someone else signed up!', 1.5);
+            }
+            food.namesList = response.data;
+            refetch_updates($http, food, 0)
+          },
+          function(response) {
+            notie.alert(3, 'Error while fetching other people', 2);
+            refetch_updates($http, food, errorCounter + 1)
+          });
+      };
+
+      function refetch_updates($http, food, errorCounter) {
+        if (errorCounter < 5) {
+          var timeout = (errorCounter + 1) * 2000;
+          console.log(timeout);
+          setTimeout(function () {
+            fetch_updates($http, food, errorCounter);
+          }, timeout);
+        }
+        else {
+          notie.confirm('Error loading data. Do you want to retry?', 'Yes', 'No', function () {
+            refetch_updates($http, food, 0);
+          });
+        }
+      }
+    </script>
+  </body>
+</html>
+
