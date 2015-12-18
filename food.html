@@ -38,7 +38,6 @@
             <div class="col-lg-6 col-lg-offset-3">
               <div class="input-group input-group-lg">
                 <input type="text" class="form-control" ng-model="f.name" />
-
                 <span class="input-group-btn">
                   <button ng-disabled="f.name.length < 2 || f.pendingRequest" class="btn btn-lg btn-success dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Sign me up <span class="caret"></span>
@@ -63,7 +62,7 @@
           <h3>
             These people are in today: 
             <span ng-repeat="n in f.namesList track by $index">
-              <span ng-if="!$last">{{n.name}}@{{n.time}},</span>
+              <span ng-if="!$last"><span ng-bind="n.name"></span>@<span ng-bind="n.time"></span>,</span>
               <span ng-if="$last">{{n.name}}@{{n.time}}</span>
             </span>
           </h3>
@@ -102,18 +101,21 @@
               food.pendingRequest = false;
             });
         };
+        fetch_updates($http, food, errorCounter, false);
         refetch_updates($http, food, 0);
       }]);
 
-      function fetch_updates($http, food, errorCounter) {
+      function fetch_updates($http, food, errorCounter, recursive) {
         console.log('fetching names...');
         $http.get('/lunch/people.json')
           .then(function(response) {
-            if(food.namesList.length < response.data.length) {
+            if(food.namesList.length < response.data.length && !recursive) {
               notie.alert(4, 'Someone else signed up!', 1.5);
             }
             food.namesList = response.data;
-            refetch_updates($http, food, 0)
+            if (recursive) {
+              refetch_updates($http, food, 0);
+            }
           },
           function(response) {
             notie.alert(3, 'Error while fetching other people', 2);
@@ -126,7 +128,7 @@
           var timeout = (errorCounter + 1) * 2000;
           console.log(timeout);
           setTimeout(function () {
-            fetch_updates($http, food, errorCounter);
+            fetch_updates($http, food, errorCounter, true);
           }, timeout);
         }
         else {
