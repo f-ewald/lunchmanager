@@ -62,8 +62,8 @@
           <h3>
             These people are in today: 
             <span ng-repeat="n in f.namesList track by $index">
-              <span ng-if="!$last"><span ng-bind="n.name"></span>@<span ng-bind="n.time"></span>,</span>
-              <span ng-if="$last">{{n.name}}@{{n.time}}</span>
+              <span ng-if="!$last"><person></person>,</span>
+              <span ng-if="$last"><person></person></span>
             </span>
           </h3>
         </div>
@@ -103,7 +103,12 @@
         };
         fetch_updates($http, food, 0, false);
         refetch_updates($http, food, 0);
-      }]);
+      }])
+      .directive('person', function() {
+        return {
+          template: '{{n.name}}@{{n.time}}'
+        };
+      });;
 
       function fetch_updates($http, food, errorCounter, recursive) {
         console.log('fetching names...');
