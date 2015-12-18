@@ -52,7 +52,7 @@
             </div>
           </div>
         </div>
-        <div ng-if="f.alreadyIn">
+        <div ng-if="f.alreadyIn" ng-cloak>
           <p class="lead">You're already in!</p>
         </div>
       </div>
@@ -61,7 +61,7 @@
         <div class="col-lg-10 col-lg-offset-1">
           <h3>
             These people are in today: 
-            <span ng-repeat="n in f.namesList track by $index">
+            <span ng-repeat="n in f.namesList track by $index" ng-cloak>
               <span ng-if="!$last"><person></person>,</span>
               <span ng-if="$last"><person></person></span>
             </span>
