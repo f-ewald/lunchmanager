@@ -8,6 +8,14 @@ var cronJob = require('cron').CronJob;
 var bodyParser = require('body-parser')
 var people = [];
 
+// Definition of a Person
+class Person {
+  constructor(name, time) {
+    this.name = name;
+    this.time = time;
+  }
+}
+
 // parse body
 app.use(bodyParser());
 
@@ -34,7 +42,8 @@ app.get('/people.json', function(req, res) {
 
 app.post('/signup', function(req, res) {
 	console.log(req.body);
-	people.push(req.body.name);
+  p = new Person(req.body.name, req.body.time);
+	people.push(p);
 });
 
 var server = app.listen(10102, function() {
