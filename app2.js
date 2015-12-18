@@ -5,16 +5,9 @@ var fs = require('fs');
 var express = require('express');
 var app = express();
 var cronJob = require('cron').CronJob;
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+var Person = require('./person.js');
 var people = [];
-
-// Definition of a Person
-class Person {
-  constructor(name, time) {
-    this.name = name;
-    this.time = time;
-  }
-}
 
 // parse body
 app.use(bodyParser());
