@@ -63,8 +63,8 @@
           <h3>
             These people are in today: 
             <span ng-repeat="n in f.namesList track by $index">
-              <span ng-if="!$last">{{n}},</span>
-              <span ng-if="$last">{{n}}</span>
+              <span ng-if="!$last">{{n.name}}@{{n.time}},</span>
+              <span ng-if="$last">{{n.name}}@{{n.time}}</span>
             </span>
           </h3>
         </div>
