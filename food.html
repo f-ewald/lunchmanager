@@ -109,7 +109,7 @@
         console.log('fetching names...');
         $http.get('/lunch/people.json')
           .then(function(response) {
-            if(food.namesList.length < response.data.length && !recursive) {
+            if(food.namesList.length < response.data.length && recursive) {
               notie.alert(4, 'Someone else signed up!', 1.5);
             }
             food.namesList = response.data;
