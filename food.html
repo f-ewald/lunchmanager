@@ -101,7 +101,7 @@
               food.pendingRequest = false;
             });
         };
-        fetch_updates($http, food, errorCounter, false);
+        fetch_updates($http, food, 0, false);
         refetch_updates($http, food, 0);
       }]);
 
