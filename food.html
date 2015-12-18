@@ -38,8 +38,16 @@
             <div class="col-lg-6 col-lg-offset-3">
               <div class="input-group input-group-lg">
                 <input type="text" class="form-control" ng-model="f.name" />
+
                 <span class="input-group-btn">
-                  <button ng-disabled="f.name.length < 2 || f.pendingRequest" class="btn btn-lg btn-success" href="#" role="button" ng-click="f.signup()">Sign me up!</button>  
+                  <button ng-disabled="f.name.length < 2 || f.pendingRequest" class="btn btn-lg btn-success dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Sign me up <span class="caret"></span>
+                  </button>  
+                  <ul class="dropdown-menu">
+                    <li><a href="#" ng-click="f.signup('12:00')">Noon</a></li>
+                    <li><a href="#" ng-click="f.signup('12:15')">12:15</a></li>
+                    <li><a href="#" ng-click="f.signup('12:30')">12:30</a></li>
+                  </ul>
                 </span>
               </div>
             </div>
@@ -68,8 +76,8 @@
 
     </div> <!-- /container -->
 
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <script type="text/javascript" src="notie.js"></script>
     <script type="text/javascript">
@@ -81,9 +89,9 @@
         food.name = '';
         food.namesList = [];
 
-        food.signup = function() {
+        food.signup = function(time) {
           food.pendingRequest = true;
-          $http.post('/lunch/signup', {name: food.name})
+          $http.post('/lunch/signup', {name: food.name, time: time})
             .then(function (response) {
               console.log(response);
               notie.alert(1, 'Success, you\'re in for today, ' + food.name + '!', 1.5);
